@@ -22,13 +22,17 @@ const client = new google.auth.JWT(
   ["https://www.googleapis.com/auth/spreadsheets"]
 );
 
-module.exports.initialize = () => {
+module.exports.initialize = async () => {
   return client.authorize((err, tokens) => {
     if (err) {
       console.log(err);
     } else {
       console.log("Connection Successful!");
-      this.checkDiaryDate(client);
+      let exists;
+      this.checkDiary(client).then((data) => {
+        exists = data;
+        console.log(exists);
+      });
     }
   });
 };
@@ -36,6 +40,7 @@ module.exports.initialize = () => {
 module.exports.checkDiary = async (cl) => {
   const gsapi = google.sheets({ version: "v4", auth: cl });
   const currentDate = new Date();
+  let exists = false;
   let currentDay =
     currentDate.getDay() < 2 ? currentDate.getDay() + 6 : currentDate.getDay();
 
@@ -60,12 +65,14 @@ module.exports.checkDiary = async (cl) => {
     let data = await gsapi.spreadsheets.values.get(opt);
     if (data.data.values) {
       console.log("diary does exist");
+      exists = true;
     } else {
       console.log("diary does not exist");
     }
   } catch (err) {
     console.log("diary does not exist");
   }
+  return exists;
 };
 
 module.exports.getDiary = async (cl) => {
@@ -82,13 +89,27 @@ module.exports.getDiary = async (cl) => {
 
 module.exports.writeDiaryDay = async (cl) => {
   const gsapi = google.sheets({ version: "v4", auth: cl });
-  const opt2 = {
+  const currentDate = new Date();
+  let currentDay =
+    currentDate.getDay() < 2 ? currentDate.getDay() + 7 : currentDate.getDay();
+
+  let firstDayDifference = currentDay - 2;
+
+  let firstDate = new Date();
+  firstDate.setDate(firstDate.getDate() - firstDayDifference);
+  let lastDate = new Date();
+  lastDate.setDate(firstDate.getDate() + 6);
+
+  const opt = {
     spreadsheetId: "1u9R6fHRkt2NxIsbScEvWYcbozIi6pjuhiHmiCQ9dtXQ",
-    range: "Jan. 18 - Jan. 24, 2022!C3:W3",
+    range: `${months[firstDate.getMonth()]}. ${firstDate.getDate()} - ${
+      months[lastDate.getMonth()]
+    }. ${lastDate.getDate()}, ${lastDate.getFullYear()}!B${currentDay + 1}:W${
+      currentDay + 1
+    }`,
     valueInputOption: "USER_ENTERED",
-    resource: { values: [["1", "2", "3"]] },
+    resource: { values: [["1", "2", "3", "HI"]] },
   };
 
-  let res = await gsapi.spreadsheets.values.update(opt2);
-  console.log(res);
+  let res = await gsapi.spreadsheets.values.update(opt);
 };
