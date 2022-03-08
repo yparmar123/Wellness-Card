@@ -156,6 +156,24 @@ a:focus {
   margin: 0;
 }
 
+.dbt-buttons {
+  border-radius: 50px;
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 35px;
+  text-decoration: none;
+  text-align: center;
+  position: relative;
+  margin: 5px 5px 5px 0;
+  padding: 5px 10px;
+  background: #d2b48cb4;
+}
+
+.dbt-buttons:hover {
+  background: #d2b48c;
+  color: #ffffff;
+}
+
 /*---------------------------------------
        PRE LOADER              
   -----------------------------------------*/
