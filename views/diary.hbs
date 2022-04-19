@@ -1,8 +1,46 @@
-{{#each questions.firstTable}}
-  <h1>{{this}}</h1>
-  <input type="text" />
-{{/each}}
-{{#each questions.secondTable}}
-  <h1>{{this}}</h1>
-  <input type="text" />
-{{/each}}
+<form action="" method="post" id="diary-form">
+  {{#each questions.firstTable}}
+    <div class="question">
+      <h1>{{this}}</h1>
+      <input
+        type="text"
+        name="firstTable{{@index}}"
+        id="firstTable{{@index}}"
+        class="question-input"
+      />
+    </div>
+
+  {{/each}}
+  {{#each questions.secondTable}}
+    <div class="question">
+      <h1>{{this}}</h1>
+      <input
+        type="text"
+        name="secondTable{{@index}}"
+        id="secondTable{{@index}}"
+        class="question-input"
+      />
+    </div>
+
+  {{/each}}
+
+</form>
+
+<div id="submitContainer">
+  <h1>Are you ready to submit your diary entry?</h1>
+  <button
+    id="submit"
+    class="dbt-buttons add-diary-button"
+    type="submit"
+    value="Submit"
+    form="diary-form"
+  >Yes</button>
+  <button id="dontSubmit" class="dbt-buttons add-diary-button">No</button>
+</div>
+
+<div id="questionControl">
+  <button id="Previous" class="dbt-buttons add-diary-button">Previous</button>
+  <button id="Next" class="dbt-buttons add-diary-button">Next</button>
+</div>
+
+<script src="/javascripts/diaryscript.js"></script>

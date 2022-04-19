@@ -15,7 +15,7 @@ router.get("/AddDiary", function (req, res, next) {
       sheetsApi
         .checkDiary()
         .then((exists) => {
-          if (exists) {
+          if (exists === "exists") {
             res.redirect("/Overwrite");
           } else {
             sheetsApi.retrieveDiaryQuestions().then((data) => {
@@ -41,5 +41,7 @@ router.get("/Overwrite", function (req, res, next) {
     title: "Wellness Card - Overwrite",
   });
 });
+
+router.post("/SubmitDiary", function (req, res, next) {});
 
 module.exports = router;

@@ -1,0 +1,15 @@
+.question {
+  display: none;
+}
+
+.add-diary-button {
+  width: 100px;
+}
+
+.question-input {
+  height: 40px;
+}
+
+#submitContainer {
+  display: none;
+}
