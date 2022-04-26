@@ -85,13 +85,19 @@ class SheetsService {
     console.log(data.data.values);
   };
 
-  writeDiaryDay = async () => {
+  writeDiaryDay = async (firstTable, secondTable) => {
     const gsapi = google.sheets({ version: "v4", auth: client });
     const opt = {
       spreadsheetId: process.env.sheet_id,
       range: this.generateSheetRange(),
       valueInputOption: "USER_ENTERED",
-      resource: { values: [["1", "2", "3", "HI"]] },
+      resource: { values: [firstTable] },
+    };
+    const opt2 = {
+      spreadsheetId: process.env.sheet_id,
+      range: this.generateSheetRange(false),
+      valueInputOption: "USER_ENTERED",
+      resource: { values: [secondTable] },
     };
 
     let exists = await this.checkDiary();
@@ -99,46 +105,13 @@ class SheetsService {
     try {
       if (exists === "page") {
         await gsapi.spreadsheets.values.update(opt);
+        await gsapi.spreadsheets.values.update(opt2);
       } else if (exists === "no page") {
         await this.createNewSheet(opt);
       }
     } catch (err) {
       console.log(err);
     }
-
-    // checkDiary().then((exists) => {
-    //   if (exists === "page") {
-    //     gsapi.spreadsheets.values.update(opt).then().catch();
-    //   } else if (exists === "no page") {
-    //     createNewSheet().then((res) => {
-    //       console.log(res);
-    //       gsapi.spreadsheets.values
-    //         .update(opt)
-    //         .then()
-    //         .catch((err) => {
-    //           console.log("second values failed");
-    //         });
-    //     });
-    //   }
-    // });
-
-    // gsapi.spreadsheets.values
-    //   .update(opt)
-    //   .then()
-    //   .catch((err) => {
-    //     createNewSheet()
-    //       .then(() => {
-    //         gsapi.spreadsheets.values
-    //           .update(opt)
-    //           .then()
-    //           .catch((err) => {
-    //             console.log("second values failed");
-    //           });
-    //       })
-    //       .catch((err) => {
-    //         console.log(err);
-    //       });
-    //   });
   };
 
   // This function retrieves diary questions
@@ -235,7 +208,7 @@ class SheetsService {
   // This function generates a string which represents the range of today's
   // date in terms of which cells to edit and which sheet to be on.
 
-  generateSheetRange = () => {
+  generateSheetRange = (firstTable = true) => {
     // Variable saves current date
     const currentDate = new Date();
 
@@ -259,11 +232,23 @@ class SheetsService {
     let lastDate = new Date();
     lastDate.setDate(firstDate.getDate() + 6);
 
-    return `${months[firstDate.getMonth()]}. ${firstDate.getDate()} - ${
-      months[lastDate.getMonth()]
-    }. ${lastDate.getDate()}, ${lastDate.getFullYear()}!B${currentDay + 3}:W${
-      currentDay + 3
-    }`;
+    let range = "";
+
+    if (firstTable) {
+      range = `${months[firstDate.getMonth()]}. ${firstDate.getDate()} - ${
+        months[lastDate.getMonth()]
+      }. ${lastDate.getDate()}, ${lastDate.getFullYear()}!B${currentDay + 3}:W${
+        currentDay + 3
+      }`;
+    } else {
+      range = `${months[firstDate.getMonth()]}. ${firstDate.getDate()} - ${
+        months[lastDate.getMonth()]
+      }. ${lastDate.getDate()}, ${lastDate.getFullYear()}!B${
+        currentDay + 12
+      }:W${currentDay + 12}`;
+    }
+
+    return range;
   };
 }
 

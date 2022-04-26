@@ -42,6 +42,14 @@ router.get("/Overwrite", function (req, res, next) {
   });
 });
 
-router.post("/SubmitDiary", function (req, res, next) {});
+router.post("/SubmitDiary", function (req, res, next) {
+  sheetsApi.initialize().then(() => {
+    sheetsApi
+      .writeDiaryDay(req.body.firstTable, req.body.secondTable)
+      .then(() => {
+        res.redirect("/");
+      });
+  });
+});
 
 module.exports = router;

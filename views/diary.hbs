@@ -1,10 +1,10 @@
-<form action="" method="post" id="diary-form">
+<form action="SubmitDiary" method="post" id="diary-form">
   {{#each questions.firstTable}}
     <div class="question">
       <h1>{{this}}</h1>
       <input
         type="text"
-        name="firstTable{{@index}}"
+        name="firstTable"
         id="firstTable{{@index}}"
         class="question-input"
       />
@@ -16,7 +16,7 @@
       <h1>{{this}}</h1>
       <input
         type="text"
-        name="secondTable{{@index}}"
+        name="secondTable"
         id="secondTable{{@index}}"
         class="question-input"
       />
