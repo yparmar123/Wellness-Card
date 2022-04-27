@@ -6,6 +6,7 @@ let submit = document.getElementById("submit");
 let dontSubmit = document.getElementById("dontSubmit");
 let questionControl = document.getElementById("questionControl");
 let inputs = document.getElementsByTagName("input");
+let overwriteModal = document.getElementById("overwriteModalCenter");
 let numOfQuestions = questions.length;
 let currentQuestion = 0;
 
@@ -41,6 +42,9 @@ let goToPreviousQuestion = () => {
 };
 
 window.onload = () => {
+  if (overwriteModal) {
+    $("#overwriteModalCenter").modal("show");
+  }
   questions[currentQuestion].style.display = "block";
   previous.style.display = "none";
   next.addEventListener("click", goToNextQuestion);

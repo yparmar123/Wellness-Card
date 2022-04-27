@@ -15,17 +15,19 @@ router.get("/AddDiary", function (req, res, next) {
       sheetsApi
         .checkDiary()
         .then((exists) => {
-          if (exists === "exists") {
-            res.redirect("/Overwrite");
-          } else {
-            sheetsApi.retrieveDiaryQuestions().then((data) => {
-              console.log(exists);
-              res.render("diary", {
-                title: "Wellness Card - Add Diary",
-                questions: data,
-              });
+          sheetsApi.retrieveDiaryQuestions().then((data) => {
+            let overwrite = false;
+
+            if (exists === "exists") {
+              overwrite = true;
+            }
+
+            res.render("diary", {
+              title: "Wellness Card - Add Diary",
+              questions: data,
+              overwrite: overwrite,
             });
-          }
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -34,12 +36,6 @@ router.get("/AddDiary", function (req, res, next) {
     .catch((err) => {
       console.log(err);
     });
-});
-
-router.get("/Overwrite", function (req, res, next) {
-  res.render("overwrite", {
-    title: "Wellness Card - Overwrite",
-  });
 });
 
 router.post("/SubmitDiary", function (req, res, next) {

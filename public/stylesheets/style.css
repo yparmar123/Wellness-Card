@@ -13,3 +13,15 @@
 #submitContainer {
   display: none;
 }
+
+.modal-backdrop {
+  display: none;
+}
+
+.modal-content {
+  z-index: 1100 !important;
+}
+
+#dontOverwrite:hover {
+  color: #333;
+}
