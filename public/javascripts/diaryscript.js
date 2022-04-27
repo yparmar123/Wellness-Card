@@ -5,6 +5,7 @@ let submitContainer = document.getElementById("submitContainer");
 let submit = document.getElementById("submit");
 let dontSubmit = document.getElementById("dontSubmit");
 let questionControl = document.getElementById("questionControl");
+let inputs = document.getElementsByTagName("input");
 let numOfQuestions = questions.length;
 let currentQuestion = 0;
 
@@ -19,6 +20,7 @@ let goToNextQuestion = () => {
     questions[currentQuestion++].style.display = "none";
     questionControl.style.display = "none";
     submitContainer.style.display = "block";
+    submit.disabled = false;
   }
 };
 
@@ -30,6 +32,7 @@ let goToPreviousQuestion = () => {
   if (currentQuestion <= numOfQuestions - 1) {
     questions[currentQuestion].style.display = "none";
   } else {
+    submit.disabled = true;
     submitContainer.style.display = "none";
     questionControl.style.display = "block";
   }
@@ -38,7 +41,6 @@ let goToPreviousQuestion = () => {
 };
 
 window.onload = () => {
-  console.log(questions);
   questions[currentQuestion].style.display = "block";
   previous.style.display = "none";
   next.addEventListener("click", goToNextQuestion);
