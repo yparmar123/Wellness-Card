@@ -1,8 +1,15 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.question {
+  display: none;
 }
 
-a {
-  color: #00B7FF;
+.add-diary-button {
+  width: 100px;
+}
+
+.question-input {
+  height: 40px;
+}
+
+#submitContainer {
+  display: none;
 }
