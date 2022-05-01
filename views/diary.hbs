@@ -44,4 +44,46 @@
   <button id="Next" class="dbt-buttons add-diary-button">Next</button>
 </div>
 
+{{#if overwrite}}
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="overwriteModalCenter"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="overwriteModalCenterTitle"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-end">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>It seems you already have a diary entry for today.
+            <br />Would you like to overwrite today's entry?</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button
+            id="overWrite"
+            type="button"
+            class="btn btn-primary"
+            data-dismiss="modal"
+          >Yes</button>
+          <button type="button" class="btn btn-secondary"><a
+              id="dontOverwrite"
+              href="/"
+            >No</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+{{/if}}
 <script src="/javascripts/diaryscript.js"></script>

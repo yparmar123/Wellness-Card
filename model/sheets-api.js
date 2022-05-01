@@ -30,15 +30,12 @@ class SheetsService {
         console.log(err);
       } else {
         console.log("Connection Successful!");
-        // createNewSheet()
-        //   .then()
-        //   .catch((err) => console.log(err));
-        // this.writeDiaryDay();
-        // checkDiary().then((data) => console.log(data));
       }
     });
   };
 
+  // This function checks if a diary entry
+  // already exists for the current day
   checkDiary = async () => {
     // Creates api variable
     const gsapi = google.sheets({ version: "v4", auth: client });
@@ -73,6 +70,9 @@ class SheetsService {
     return exists;
   };
 
+  // This function was created to test retrieving
+  // diary and is not currently implemented into
+  // the project as a feature
   getDiary = async () => {
     const gsapi = google.sheets({ version: "v4", auth: client });
     const opt = {
@@ -85,33 +85,51 @@ class SheetsService {
     console.log(data.data.values);
   };
 
+  // This function takes in values for both the table and
+  // writes them into the correct day and correct row
   writeDiaryDay = async (firstTable, secondTable) => {
     const gsapi = google.sheets({ version: "v4", auth: client });
+
+    // These options are for a batch update, includes the values for both
+    // table ranges and table values
     const opt = {
       spreadsheetId: process.env.sheet_id,
-      range: this.generateSheetRange(),
-      valueInputOption: "USER_ENTERED",
-      resource: { values: [firstTable] },
-    };
-    const opt2 = {
-      spreadsheetId: process.env.sheet_id,
-      range: this.generateSheetRange(false),
-      valueInputOption: "USER_ENTERED",
-      resource: { values: [secondTable] },
+      resource: {
+        valueInputOption: "USER_ENTERED",
+        data: [
+          // These are the values for the first table
+          {
+            range: this.generateSheetRange(),
+            values: [firstTable],
+          },
+          // These are the values for the second table
+          {
+            range: this.generateSheetRange(false),
+            values: [secondTable],
+          },
+        ],
+      },
     };
 
-    let exists = await this.checkDiary();
-
-    try {
-      if (exists === "page") {
-        await gsapi.spreadsheets.values.update(opt);
-        await gsapi.spreadsheets.values.update(opt2);
-      } else if (exists === "no page") {
-        await this.createNewSheet(opt);
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    // This section starts off by checking the status on
+    // whether a page exists, entry exists or entry does not exist
+    this.checkDiary()
+      .then((exists) => {
+        // If a page doesnt exist a new page will be created,
+        // function called takes care of creation and writing
+        // of entry (possibly look into this in the future as
+        // writing after createNewSheet led to an error, it would
+        // be preferrable to write in the current function instead)
+        if (exists === "no page") {
+          this.createNewSheet(opt);
+          // If a page does exist the values will be written right away
+        } else {
+          gsapi.spreadsheets.values.batchUpdate(opt);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // This function retrieves diary questions
@@ -193,16 +211,18 @@ class SheetsService {
           opt.resource = { values: layout };
           opt.valueInputOption = "USER_ENTERED";
 
+          // Updates table with layout values
           gsapi.spreadsheets.values
             .update(opt)
-            .then()
+            .then(() => {
+              // Updates table with diary entry values
+              gsapi.spreadsheets.values.batchUpdate(options);
+            })
             .catch((err) => console.log(err));
         }
         return res;
       }
     );
-
-    await gsapi.spreadsheets.values.update(options);
   };
 
   // This function generates a string which represents the range of today's
@@ -234,6 +254,9 @@ class SheetsService {
 
     let range = "";
 
+    // firstTable variable has been entered to allow program to know
+    // to generate range for the first or second table. This if statement
+    // is where that decision is made.
     if (firstTable) {
       range = `${months[firstDate.getMonth()]}. ${firstDate.getDate()} - ${
         months[lastDate.getMonth()]
