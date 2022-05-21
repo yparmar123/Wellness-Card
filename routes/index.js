@@ -2,14 +2,24 @@ var express = require("express");
 var router = express.Router();
 const sheetsApi = require("../model/sheets-api");
 
+const ensureLogin = (req, res, next) => {
+  if (!req.session.user) {
+    res.redirect("/Login");
+  } else if (!req.session.user) {
+    res.redirect("/noaccess");
+  } else {
+    next();
+  }
+};
+
 /* GET home page. */
-router.get("/", function (req, res, next) {
+router.get("/", ensureLogin, function (req, res, next) {
   sheetsApi.initialize();
-  res.render("index", { title: "Wellness Card - Home Page" });
+  res.render("general/index", { title: "Wellness Card - Home Page" });
 });
 
 // Add Diary page
-router.get("/AddDiary", function (req, res, next) {
+router.get("/AddDiary", ensureLogin, function (req, res, next) {
   sheetsApi
     .initialize()
     .then(() => {
@@ -48,13 +58,25 @@ router.get("/AddDiary", function (req, res, next) {
 // This post handles submission of diary entries. It takes in values of the first
 // and second table, then passes it over to the writeDiaryDay function. From there it
 // is sent over to the sheet assigned to the account owner
-router.post("/SubmitDiary", function (req, res, next) {
+router.post("/SubmitDiary", ensureLogin, function (req, res, next) {
   sheetsApi.initialize().then(() => {
     sheetsApi
       .writeDiaryDay(req.body.firstTable, req.body.secondTable)
       .then(() => {
         res.redirect("/");
       });
+  });
+});
+
+router.get("/Login", function (req, res, next) {
+  res.render("account/login", {
+    title: "Wellness Card - Log In Page",
+  });
+});
+
+router.get("/noaccess", (req, res) => {
+  res.render("general/noaccess", {
+    title: "Error No Access",
   });
 });
 
